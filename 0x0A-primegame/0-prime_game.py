@@ -1,56 +1,42 @@
 #!/usr/bin/python3
-"""
-Prime Game
-"""
+"""0. Prime Game - Maria and Ben are playing a game"""
 
 
 def isWinner(x, nums):
-    """Solution to Prime Game Task"""
-    if x < 1 or not nums:
+    """x - rounds
+    nums - numbers list
+    """
+    if x <= 0 or nums is None:
+        return None
+    if x != len(nums):
         return None
 
-    maxPrime = max(nums)
-    primeNumbers = [True for _ in range(maxPrime + 1)]
-    primeNumbers[0] = False
-    primeNumbers[1] = False
-    p = 2
+    ben = 0
+    maria = 0
 
-    while p * p <= maxPrime:
-        if primeNumbers[p]:
-            for i in range(p * p, maxPrime + 1, p):
-                primeNumbers[i] = False
-        p += 1
+    a = [1 for x in range(sorted(nums)[-1] + 1)]
+    a[0], a[1] = 0, 0
+    for i in range(2, len(a)):
+        rm_multiples(a, i)
 
-    benCount = 0
-    mariaCount = 0
-    for num in nums:
-        numSet = list(range(1, num + 1))
-        isMariaTurn = True
-        primes = [
-            i for i, is_prime in enumerate(primeNumbers)
-            if is_prime and i <= num
-            ]
-
-        while numSet:
-            found_prime = False
-            for prime in primes:
-                if prime in numSet:
-                    found_prime = True
-                    numSet = [n for n in numSet if n % prime != 0]
-                    break
-            if not found_prime:
-                break
-
-            isMariaTurn = not isMariaTurn
-
-        if isMariaTurn:
-            benCount += 1
+    for i in nums:
+        if sum(a[0:i + 1]) % 2 == 0:
+            ben += 1
         else:
-            mariaCount += 1
-
-    if mariaCount > benCount:
-        return "Maria"
-    elif benCount > mariaCount:
+            maria += 1
+    if ben > maria:
         return "Ben"
-    else:
-        return None
+    if maria > ben:
+        return "Maria"
+    return None
+
+
+def rm_multiples(ls, x):
+    """removes multiple
+    of primes
+    """
+    for i in range(2, len(ls)):
+        try:
+            ls[i * x] = 0
+        except (ValueError, IndexError):
+            break
